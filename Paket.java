@@ -26,6 +26,27 @@ public class Paket {
         System.out.println("Nama Penerima: " + this.namaPenerima);
         System.out.println("Metode Pengiriman: " + this.metodePengiriman);
         System.out.println("Status Paket: " + this.status);
-        System.out.println();
+    }
+
+    // Sub-Task 2
+    // Setter
+    public void setStatus(String statusBaru) {
+        this.status = statusBaru;
+    }
+
+    public String getNoTracking() {
+        return noTracking;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+
+    public int getEta() {
+        return eta;
     }
 }

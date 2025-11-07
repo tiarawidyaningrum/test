@@ -20,7 +20,34 @@ public class Kurir {
         System.out.println("=== Info Kurir ===");
         System.out.println("Nama Kurir: " + this.namaKurir);
         System.out.println("Gaji Kurir: " + (int)this.gajiPokok); 
-        System.out.println("Kapasitas Kurir: " + this.kapasitas + " paket");
+        System.out.println("Kapasitas Kurir: " + this.countPaket + " dari " + this.kapasitas + " paket");
         System.out.println();
+    }
+
+    public void addJob(Paket paket) {
+        if (!paket.getStatus().equals("Menunggu Kurir")) {
+            System.out.println("Paket telah diambil oleh kurir lain!");
+            return;
+        }
+
+        if (countPaket >= kapasitas) {
+            System.out.println("Kapasitas kurir " + this.namaKurir + " sudah penuh");
+            return;
+        }
+
+        listPaket[countPaket] = paket;
+        countPaket++;
+        
+        paket.setStatus("Dikirim oleh Kurir " + this.namaKurir);
+        
+        System.out.println("Paket telah diambil oleh Kurir " + this.namaKurir);
+    }
+    
+    public String getNamaKurir() {
+        return namaKurir;
+    }
+
+    public double hitungGaji() {
+        return this.gajiPokok;
     }
 }
