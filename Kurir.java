@@ -19,7 +19,7 @@ public class Kurir {
     public void detailKurir() {
         System.out.println("=== Info Kurir ===");
         System.out.println("Nama Kurir: " + this.namaKurir);
-        System.out.println("Gaji Kurir: " + (int)this.gajiPokok); 
+        System.out.println("Gaji Kurir: " + (int)Math.round(this.gajiPokok)); 
         System.out.println("Kapasitas Kurir: " + this.countPaket + " dari " + this.kapasitas + " paket");
         System.out.println();
     }
@@ -55,7 +55,7 @@ public class Kurir {
         }
     }
 
-    public void paketDiterima(String noTracking) {
+    public double paketDiterima(String noTracking) {
         int indexDitemukan = -1;
         
         for (int i = 0; i < this.countPaket; i++) {
@@ -71,12 +71,14 @@ public class Kurir {
             // Cek status
             if (paketSelesai.getStatus().equals("Diterima")) {
                 System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima");
-                return;
+                return 0.0;
             }
             
-            this.gajiPokok += paketSelesai.getFee();
+            double feePajak = paketSelesai.getFee() * 0.10;      // 10% Tax/Profit
+            double feeBersih = paketSelesai.getFee() - feePajak; // 90% untuk kurir
             
-            // Update status paket
+            this.gajiPokok += feeBersih;
+            
             paketSelesai.setStatus("Diterima");
             
             for (int i = indexDitemukan; i < this.countPaket - 1; i++) {
@@ -86,10 +88,13 @@ public class Kurir {
             this.listPaket[this.countPaket - 1] = null;
             this.countPaket--;
             
-            System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima");
+            System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima oleh " + paketSelesai.getNamaPenerima());
+            
+            return feePajak; 
             
         } else {
             System.out.println("Paket tidak ditemukan!");
+            return 0.0;
         }
     }
 

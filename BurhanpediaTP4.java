@@ -95,20 +95,29 @@ public class BurhanpediaTP4 {
                     perusahaan.tampilkanSemuaPaket();
                     break;
                     
-                case 5: // Assign Paket ke Kurir (Implementasi di Sub-Task berikutnya)
-                    System.out.println("Fitur Assign Paket belum diimplementasikan.");
+                case 5: // Assign Paket ke Kurir
+                    System.out.print("Masukkan nama kurir: ");
+                    String namaKurirAssign = sc.nextLine().trim();
+                    System.out.print("Masukkan nomor tracking: ");
+                    String noTrackingAssign = sc.nextLine().trim();
+                    perusahaan.assignPaket(namaKurirAssign, noTrackingAssign);
+                    break;
+
+                case 6: // Selesaikan Paket
+                    System.out.print("Masukkan nama kurir: ");
+                    String namaKurirSelesai = sc.nextLine().trim();
+                    System.out.print("Masukkan nomor tracking paket: ");
+                    String noTrackingSelesai = sc.nextLine().trim();
+                    perusahaan.selesaikanPaket(namaKurirSelesai, noTrackingSelesai);
                     break;
                     
-                case 6: // Selesaikan Paket (Implementasi di Sub-Task berikutnya)
-                    System.out.println("Fitur Selesaikan Paket belum diimplementasikan.");
-                    break;
-                    
-                case 7: // Lihat Laporan Keuangan (Implementasi di Sub-Task berikutnya)
-                    System.out.println("Fitur Laporan Keuangan belum diimplementasikan.");
+                case 7: // Lihat Laporan Keuangan
+                    perusahaan.lihatLaporanKeuangan();
                     break;
 
                 case 8: // Keluar
-                    System.out.println("Terima kasih telah menggunakan layanan Burhan Express!");
+                    System.out.println("Keluar dari " + perusahaan.getNamaPerusahaan() + "...");
+                    System.out.println("\nTerima kasih telah menggunakan layanan Burhan Express!");
                     running = false;
                     break;
                     

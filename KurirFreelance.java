@@ -5,12 +5,13 @@ public class KurirFreelance extends Kurir {
         super(nama, kapasitas);
         this.totalJamTerbang = 0;
     }
-    
+    @Override
     public double hitungGaji() {
         return this.gajiPokok + (this.gajiPokok * 0.01 * this.totalJamTerbang);
     }
 
-    public void paketDiterima(String noTracking) {
+    @Override
+    public double paketDiterima(String noTracking) {
         int indexDitemukan = -1;
         
         // 1. Cari paket
@@ -24,34 +25,34 @@ public class KurirFreelance extends Kurir {
         if (indexDitemukan != -1) {
             Paket paketSelesai = this.listPaket[indexDitemukan];
             
-            // Cek status paket agar tidak menggaji dua kali
             if (paketSelesai.getStatus().equals("Diterima")) {
                 System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima");
-                return;
+                return 0.0;
             }
             
-            // LOGIKA SPESIFIK KurirFreelance: Tambahkan totalJamTerbang
             this.totalJamTerbang += paketSelesai.getEta();
             
-            // 2. Tambahkan gajiPokok dengan fee paket
-            this.gajiPokok += paketSelesai.getFee();
+            double feePajak = paketSelesai.getFee() * 0.10;
+            double feeBersih = paketSelesai.getFee() - feePajak;
             
-            // 3. Update status paket
+            this.gajiPokok += feeBersih;
+            
             paketSelesai.setStatus("Diterima");
             
-            // 4. Geser array (Kompaksi)
             for (int i = indexDitemukan; i < this.countPaket - 1; i++) {
                 this.listPaket[i] = this.listPaket[i + 1];
             }
-            // Kosongkan elemen terakhir dan kurangi countPaket
+
             this.listPaket[this.countPaket - 1] = null;
             this.countPaket--;
             
-            // 5. Output
-            System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima");
+            System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima oleh " + paketSelesai.getNamaPenerima());
+            
+            return feePajak;
             
         } else {
             System.out.println("Paket tidak ditemukan!");
+            return 0.0;
         }
     }
 }

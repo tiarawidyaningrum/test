@@ -5,11 +5,13 @@ public class PTBurhan {
     private String namaPerusahaan;
     private ArrayList<Kurir> daftarKurir;
     private ArrayList<Paket> daftarPaket;
+    private double totalProfit;
 
     public PTBurhan(String namaPerusahaan) {
         this.namaPerusahaan = namaPerusahaan;
         this.daftarKurir = new ArrayList<>();
         this.daftarPaket = new ArrayList<>();
+        this.totalProfit = 0.0;
         System.out.println("Perusahaan " + namaPerusahaan + " berhasil dibuat!");
     }
 
@@ -75,6 +77,43 @@ public class PTBurhan {
             p.detailPaket();
             System.out.println(); 
         }
+    }
+    // Assign Paket (Menu 5)
+    public void assignPaket(String namaKurir, String noTracking) {
+        Kurir kurir = cariKurir(namaKurir);
+        Paket paket = cariPaket(noTracking);
+
+        if (kurir == null) {
+            System.out.println("Gagal: Kurir " + namaKurir + " tidak ditemukan!");
+            return;
+        }
+        if (paket == null) {
+            System.out.println("Gagal: Paket dengan no tracking " + noTracking + " tidak ditemukan!");
+            return;
+        }
+        
+        kurir.addJob(paket);
+    }
+
+    // Selesaikan Paket (Menu 6)
+    public void selesaikanPaket(String namaKurir, String noTracking) {
+        Kurir kurir = cariKurir(namaKurir);
+
+        if (kurir == null) {
+            System.out.println("Gagal: Kurir " + namaKurir + " tidak ditemukan!");
+            return;
+        }
+        
+        double tax = kurir.paketDiterima(noTracking);
+        
+        // Tambahkan tax ke profit perusahaan
+        this.totalProfit += tax;
+    }
+
+    // Laporan Keuangan (Menu 7)
+    public void lihatLaporanKeuangan() {
+        System.out.println("\n=== Laporan Keuangan " + this.namaPerusahaan + " ===");
+        System.out.printf("Total Profit: Rp%.0f\n", this.totalProfit);
     }
     
     public Kurir cariKurir(String namaKurir) {
