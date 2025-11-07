@@ -43,6 +43,56 @@ public class Kurir {
         System.out.println("Paket telah diambil oleh Kurir " + this.namaKurir);
     }
     
+    public void printListPaket() {
+        System.out.println("=================== List Penerima ===================");
+        if (this.countPaket == 0) {
+            System.out.println("Tidak ada paket yang sedang dikirim.");
+        } else {
+            for (int i = 0; i < this.countPaket; i++) {
+                System.out.println("Paket " + (i + 1) + ":");
+                this.listPaket[i].detailPaket(); 
+            }
+        }
+    }
+
+    public void paketDiterima(String noTracking) {
+        int indexDitemukan = -1;
+        
+        for (int i = 0; i < this.countPaket; i++) {
+            if (this.listPaket[i] != null && this.listPaket[i].getNoTracking().equals(noTracking)) {
+                indexDitemukan = i;
+                break;
+            }
+        }
+
+        if (indexDitemukan != -1) {
+            Paket paketSelesai = this.listPaket[indexDitemukan];
+            
+            // Cek status
+            if (paketSelesai.getStatus().equals("Diterima")) {
+                System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima");
+                return;
+            }
+            
+            this.gajiPokok += paketSelesai.getFee();
+            
+            // Update status paket
+            paketSelesai.setStatus("Diterima");
+            
+            for (int i = indexDitemukan; i < this.countPaket - 1; i++) {
+                this.listPaket[i] = this.listPaket[i + 1];
+            }
+
+            this.listPaket[this.countPaket - 1] = null;
+            this.countPaket--;
+            
+            System.out.println("Paket dengan nomor tracking:\n=> " + noTracking + " sudah diterima");
+            
+        } else {
+            System.out.println("Paket tidak ditemukan!");
+        }
+    }
+
     public String getNamaKurir() {
         return namaKurir;
     }
