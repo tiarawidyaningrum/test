@@ -6,12 +6,16 @@ public class PTBurhan {
     private ArrayList<Kurir> daftarKurir;
     private ArrayList<Paket> daftarPaket;
     private double totalProfit;
+    private ArrayList<Kendaraan> daftarKendaraan;
+    private ArrayList<Peminjaman> daftarPeminjaman;
 
     public PTBurhan(String namaPerusahaan) {
         this.namaPerusahaan = namaPerusahaan;
         this.daftarKurir = new ArrayList<>();
         this.daftarPaket = new ArrayList<>();
         this.totalProfit = 0.0;
+        this.daftarKendaraan = new ArrayList<>();
+        this.daftarPeminjaman = new ArrayList<>();
         System.out.println("Perusahaan " + namaPerusahaan + " berhasil dibuat!");
     }
 
@@ -45,6 +49,8 @@ public class PTBurhan {
             paketBaru = new PaketSameDay(namaPenerima);
         } else if (tipe.equalsIgnoreCase("NextDay")) {
             paketBaru = new PaketNextDay(namaPenerima);
+        } else if (tipe.equalsIgnoreCase("Hemat")) {
+            paketBaru = new PaketHemat(namaPenerima);
         } else {
             System.out.println("Gagal: Tipe paket tidak valid!");
             return;
@@ -78,6 +84,7 @@ public class PTBurhan {
             System.out.println(); 
         }
     }
+
     // Assign Paket (Menu 5)
     public void assignPaket(String namaKurir, String noTracking) {
         Kurir kurir = cariKurir(namaKurir);
@@ -116,6 +123,137 @@ public class PTBurhan {
         System.out.printf("Total Profit: Rp%.0f\n", this.totalProfit);
     }
     
+    // Pencarian Paket (Menu 8)
+    // menampilkan semua paket dengan nama penerima
+    public void pencarianPaket(String namaPenerima) {
+        System.out.println("\nPencarian Paket " + namaPenerima);
+        ArrayList<Paket> ditemukan = new ArrayList<>();
+    
+        for (Paket p : daftarPaket) {
+            if (p.getNamaPenerima().equalsIgnoreCase(namaPenerima)) { 
+                ditemukan.add(p);
+            }
+        }
+
+        if (ditemukan.isEmpty()) {
+            System.out.println("Tidak ada paket ditemukan dengan nama penerima: " + namaPenerima);
+        } else {
+            System.out.println(ditemukan.size() + " paket ditemukan:");
+            for (int i = 0; i < ditemukan.size(); i++) {
+                System.out.println("Paket " + (i + 1) + ":");
+                ditemukan.get(i).detailPaket();
+            }
+        }
+    }
+
+    // (Menu 9)
+    public void tambahKendaraan(String tipe, String noPlat, String merek, int tahun, int detail) {
+        for (Kendaraan k : daftarKendaraan) {
+            if (k.getNoPlat().equalsIgnoreCase(noPlat)) {
+                System.out.println("Gagal: Kendaraan dengan plat " + noPlat + " sudah terdaftar.");
+                return;
+            }
+        }
+
+        Kendaraan kendaraanBaru = null;
+        if (tipe.equalsIgnoreCase("Mobil")) {
+            kendaraanBaru = new Mobil(noPlat, merek, tahun, detail); // detail = jumlahPintu
+        } else if (tipe.equalsIgnoreCase("Motor")) {
+            kendaraanBaru = new Motor(noPlat, merek, tahun, detail); // detail = kapasitasMesinCC
+        } else {
+            System.out.println("Gagal: Tipe kendaraan tidak valid!");
+            return;
+        }
+
+        daftarKendaraan.add(kendaraanBaru);
+        System.out.println("Kendaraan " + merek + " (" + noPlat + ") berhasil ditambahkan.");
+    }
+
+    // Tampilkan Semua Kendaraan (Menu Baru)
+    public void tampilkanSemuaKendaraan() {
+        System.out.println("\n=== Daftar Kendaraan di " + this.namaPerusahaan + " ===");
+        if (daftarKendaraan.isEmpty()) {
+            System.out.println("Belum ada kendaraan terdaftar.");
+            return;
+        }
+        for (Kendaraan k : daftarKendaraan) {
+            k.displayInfo();
+        }
+    }
+
+    // Pinjam Kendaraan (Menu Baru)
+    public void pinjamKendaraan(String namaKurir, String noPlatKendaraan, String tanggalPinjam) {
+        Kurir kurir = cariKurir(namaKurir);
+        Kendaraan kendaraan = cariKendaraan(noPlatKendaraan);
+
+        if (kurir == null) {
+            System.out.println("Gagal: Kurir " + namaKurir + " tidak ditemukan!");
+            return;
+        }
+        if (kendaraan == null) {
+            System.out.println("Gagal: Kendaraan dengan plat " + noPlatKendaraan + " tidak ditemukan!");
+            return;
+        }
+        if (kendaraan.isDipinjam()) {
+            System.out.println("Gagal: Kendaraan dengan plat " + noPlatKendaraan + " sedang dipinjam!");
+            return;
+        }
+        if (kurir.getKendaraanSaatIni() != null) {
+            System.out.println("Gagal: Kurir " + namaKurir + " sudah meminjam kendaraan lain!");
+            return;
+        }
+
+        kurir.pinjamKendaraan(kendaraan);
+
+        Peminjaman peminjamanBaru = new Peminjaman(kurir, kendaraan, tanggalPinjam);
+        daftarPeminjaman.add(peminjamanBaru);
+        
+        System.out.println("Peminjaman berhasil! Kendaraan " + kendaraan.getMerek() + " (" + kendaraan.getNoPlat() + ") dipinjam oleh " + kurir.getNamaKurir());
+    }
+    
+    // Kembalikan Kendaraan (Menu Baru)
+    public void kembalikanKendaraan(String namaKurir, String tanggalKembali) {
+        Kurir kurir = cariKurir(namaKurir);
+
+        if (kurir == null) {
+            System.out.println("Gagal: Kurir " + namaKurir + " tidak ditemukan!");
+            return;
+        }
+        
+        Kendaraan k = kurir.kembalikanKendaraan();
+        
+        if (k == null) {
+            return;
+        }
+
+        boolean found = false;
+        for (Peminjaman p : daftarPeminjaman) {
+            if (p.getKurir() == kurir && p.getKendaraan() == k && p.getTanggalKembali() == null) {
+                p.setTanggalKembali(tanggalKembali);
+                System.out.println("Pengembalian berhasil. Peminjaman dicatat selesai pada tanggal " + tanggalKembali);
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            System.out.println("Error: Data peminjaman aktif tidak ditemukan. Kendaraan dikembalikan, tetapi catatan peminjaman bermasalah.");
+        }
+    }
+    
+    // Tampilkan Riwayat Peminjaman (Menu Baru)
+    public void tampilkanRiwayatPeminjaman() {
+        System.out.println("\n=== Riwayat Peminjaman Kendaraan ===");
+        if (daftarPeminjaman.isEmpty()) {
+            System.out.println("Tidak ada riwayat peminjaman.");
+            return;
+        }
+        for (Peminjaman p : daftarPeminjaman) {
+            p.displayInfo();
+        }
+    }
+
+    // Helper
     public Kurir cariKurir(String namaKurir) {
         for (Kurir k : daftarKurir) {
             if (k.getNamaKurir().equalsIgnoreCase(namaKurir)) {
@@ -134,6 +272,14 @@ public class PTBurhan {
         return null;
     }
 
+    public Kendaraan cariKendaraan(String noPlat) { // <<< PENTING: Method ini harus ada di PTBurhan.java
+    for (Kendaraan k : daftarKendaraan) {
+        if (k.getNoPlat().equalsIgnoreCase(noPlat)) {
+            return k;
+        }
+    }
+    return null;
+}
     public String getNamaPerusahaan() {
         return namaPerusahaan;
     }

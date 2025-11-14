@@ -42,6 +42,10 @@ public class Paket {
         return status;
     }
 
+    public String getNamaPenerima() {
+        return namaPenerima;
+    }
+    
     public double getFee() {
         return fee;
     }

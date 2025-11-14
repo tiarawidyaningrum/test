@@ -4,7 +4,8 @@ public class Kurir {
     protected double gajiPokok;
     protected int kapasitas;
     protected Paket[] listPaket; 
-    protected int countPaket;   
+    protected int countPaket;  
+    protected Kendaraan kendaraanSaatIni; 
 
     // Konstruktor 
     public Kurir(String nama, int kapasitas) {
@@ -13,14 +14,21 @@ public class Kurir {
         this.kapasitas = kapasitas;
         this.listPaket = new Paket[kapasitas];
         this.countPaket = 0;
+        this.kendaraanSaatIni = null;
     }
 
-    // Getter
     public void detailKurir() {
         System.out.println("=== Info Kurir ===");
         System.out.println("Nama Kurir: " + this.namaKurir);
         System.out.println("Gaji Kurir: " + (int)Math.round(this.gajiPokok)); 
         System.out.println("Kapasitas Kurir: " + this.countPaket + " dari " + this.kapasitas + " paket");
+
+        if (this.kendaraanSaatIni != null) {
+            System.out.println("Kendaraan Dipinjam: " + this.kendaraanSaatIni.getMerek() + " (" + this.kendaraanSaatIni.getNoPlat() + ")");
+        } else {
+            System.out.println("Kendaraan Dipinjam: -");
+        }
+
         System.out.println();
     }
 
@@ -98,6 +106,32 @@ public class Kurir {
         }
     }
 
+    public void pinjamKendaraan(Kendaraan k) {
+        if (this.kendaraanSaatIni != null) {
+            return;
+        }
+        
+        this.kendaraanSaatIni = k;
+        k.setDipinjam(true);
+    }
+
+    public Kendaraan kembalikanKendaraan() {
+        if (this.kendaraanSaatIni == null) {
+            System.out.println("Kurir " + this.namaKurir + " tidak sedang meminjam kendaraan.");
+            return null;
+        }
+
+        Kendaraan k = this.kendaraanSaatIni;
+        k.setDipinjam(false);
+        this.kendaraanSaatIni = null;
+        
+        return k; 
+    }
+
+    public Kendaraan getKendaraanSaatIni() {
+        return kendaraanSaatIni;
+    }
+    
     public String getNamaKurir() {
         return namaKurir;
     }

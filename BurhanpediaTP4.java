@@ -24,7 +24,15 @@ public class BurhanpediaTP4 {
         System.out.println("5. Assign Paket ke Kurir");
         System.out.println("6. Selesaikan Paket");
         System.out.println("7. Lihat Laporan Keuangan");
-        System.out.println("8. Keluar dari " + namaPerusahaan);
+        System.out.println("8. Pencarian Paket");
+
+        System.out.println("9. Tambah Kendaraan");
+        System.out.println("10. Tampilkan Semua Kendaraan");
+        System.out.println("11. Pinjam Kendaraan");
+        System.out.println("12. Kembalikan Kendaraan");
+        System.out.println("13. Tampilkan Riwayat Peminjaman");
+
+        System.out.println("14. Keluar dari " + namaPerusahaan);
     }
 
     public static void main(String[] args) {
@@ -115,12 +123,76 @@ public class BurhanpediaTP4 {
                     perusahaan.lihatLaporanKeuangan();
                     break;
 
-                case 8: // Keluar
+                case 8: // Pencarian Paket
+                    System.out.print("Masukkan nama penerima: ");
+                    String namaPenerimaPaket = sc.nextLine().trim();
+                    perusahaan.pencarianPaket(namaPenerimaPaket);
+                    break;
+    
+                case 9: // Tambah Kendaraan
+                    System.out.print("Masukkan tipe kendaraan (Mobil/Motor): ");
+                    String tipeKendaraan = sc.nextLine().trim();
+                    System.out.print("Masukkan No. Plat: ");
+                    String noPlat = sc.nextLine().trim();
+                    System.out.print("Masukkan Merek: ");
+                    String merek = sc.nextLine().trim();
+                    System.out.print("Masukkan Tahun: ");
+                    int tahun = 0;
+                    if (sc.hasNextInt()) {
+                        tahun = sc.nextInt();
+                        sc.nextLine();
+                    } else {
+                        System.out.println("Tahun tidak valid!");
+                        sc.nextLine(); 
+                        break;
+                    }
+                
+                    System.out.print("Masukkan Detail (" + (tipeKendaraan.equalsIgnoreCase("Mobil") ? "Jumlah Pintu" : "Kapasitas CC") + "): ");
+                    int detail = 0;
+                    if (sc.hasNextInt()) {
+                        detail = sc.nextInt();
+                        sc.nextLine();
+                    } else {
+                        System.out.println("Detail tidak valid!");
+                        sc.nextLine(); 
+                        break;
+                    }
+                    
+                    perusahaan.tambahKendaraan(tipeKendaraan, noPlat, merek, tahun, detail);
+                    break;
+
+                case 10: // Tampilkan Semua Kendaraan
+                    perusahaan.tampilkanSemuaKendaraan();
+                    break;
+
+                case 11: // Pinjam Kendaraan
+                    System.out.print("Masukkan nama kurir: ");
+                    String namaKurirPinjam = sc.nextLine().trim();
+                    System.out.print("Masukkan No. Plat kendaraan: ");
+                    String noPlatPinjam = sc.nextLine().trim();
+                    System.out.print("Masukkan tanggal pinjam (ex: DD/MM/YYYY): ");
+                    String tanggalPinjam = sc.nextLine().trim();
+                    perusahaan.pinjamKendaraan(namaKurirPinjam, noPlatPinjam, tanggalPinjam);
+                    break;
+
+                case 12: // Kembalikan Kendaraan
+                    System.out.print("Masukkan nama kurir yang mengembalikan: ");
+                    String namaKurirKembali = sc.nextLine().trim();
+                    System.out.print("Masukkan tanggal kembali (ex: DD/MM/YYYY): ");
+                    String tanggalKembali = sc.nextLine().trim();
+                    perusahaan.kembalikanKendaraan(namaKurirKembali, tanggalKembali);
+                    break;
+
+                case 13: // Tampilkan Riwayat Peminjaman
+                    perusahaan.tampilkanRiwayatPeminjaman();
+                    break;
+        
+                case 14: // Keluar
                     System.out.println("Keluar dari " + perusahaan.getNamaPerusahaan() + "...");
                     System.out.println("\nTerima kasih telah menggunakan layanan Burhan Express!");
                     running = false;
-                    break;
-                    
+                    break;    
+
                 default:
                     System.out.println("Menu tidak valid. Silakan pilih antara 1 hingga 8.");
                     break;
